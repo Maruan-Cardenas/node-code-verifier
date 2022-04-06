@@ -6,6 +6,11 @@ export type BasiResponse = {
   message: string
 }
 
+export type BayResponse = {
+  message: string,
+  Date: string
+}
+
 /**
  * Error JSON response for Controller
 */
