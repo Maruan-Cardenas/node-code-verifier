@@ -10,12 +10,21 @@ const port: string | number = process.env.PORT || 8000
 
 // define the first Rute of APP
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World x2!')
+  res.send('Welcome to my first Express APP')
 })
 
 // define the second Rute of APP
 app.get('/hello', (req: Request, res: Response) => {
-  res.send('Bye')
+  const name = req.query.name || 'World'
+  res.send('Hello ' + name + '!')
+})
+
+app.get('/bye', (req: Request, res: Response) => {
+  res.send({
+    data: {
+      message: 'Goodbye world'
+    }
+  })
 })
 
 // Execute APP and Listen Requests to PORT
