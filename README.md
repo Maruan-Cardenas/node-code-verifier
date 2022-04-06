@@ -4,6 +4,8 @@ Dependencias del proyecto:
 
   - dotenv: sirve para poder acceder fácilmente a los archivos .env y poder utilizar así las variables de entorno
   - express: es un framework de Node js, que nos permite gestionar rutas, sesiones, cookies, etc...
+  - cors: sirve para la confirguración de cors que nos permite restringir los recursos solicitados.
+  - helmet: Sirve para proteger la aplicación de algunas vulnerabilidades web
 
 - dependencias de desarrollo:
   - TypeScript: es un superset de JavaScript, que nos ayuda a evitar errores al programar, ya que nos permite definir las variables que vamos a utilizar
