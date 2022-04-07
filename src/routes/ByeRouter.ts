@@ -1,6 +1,7 @@
 import { ByeController } from '../controller/byeController'
 import express, { Request, Response } from 'express'
 import { LogInfo } from '../utils/logger'
+import { BayResponse } from '../controller/types'
 
 // Router from express
 const byeRouter = express.Router()
@@ -15,7 +16,7 @@ byeRouter.route('/')
     // Controller Instance to excute method
     const controller: ByeController = new ByeController()
     // Obtain a Response
-    const response: any = await controller.getMessage(name)
+    const response: BayResponse = await controller.getMessage(name)
     // Send to the client the response
     return res.send(response)
   })

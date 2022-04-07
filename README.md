@@ -6,6 +6,8 @@ Dependencias del proyecto:
   - express: es un framework de Node js, que nos permite gestionar rutas, sesiones, cookies, etc...
   - cors: sirve para la confirguración de cors que nos permite restringir los recursos solicitados.
   - helmet: Sirve para proteger la aplicación de algunas vulnerabilidades web
+  - swagger: sirve para generar documentación de nuestro código
+  - tsoa: siver para utilizar swagger con typescript y poder documentar nuestro código mediante anotaciones
 
 - dependencias de desarrollo:
   - TypeScript: es un superset de JavaScript, que nos ayuda a evitar errores al programar, ya que nos permite definir las variables que vamos a utilizar
@@ -20,6 +22,7 @@ Scripts de NPM utilizados:
 - dev: con este comando lanzaremos varias acciones a la vez, para buidear y ejecutar el código al mismo tiempo, y manteniendose a al escucha para que con cada cambio ejecute el buideo y el reinicio del servidor automáticamente.
 - test: sirve para lanzar los test que hayamos definido en la carpeta **test**
 - serve: con este comando pasaremos los test y ejecutaremos serve
+- swagger: ejecuta swagger para generar la documentación del proyecto
 
 Variables de entorno necesarias:
 

@@ -1,3 +1,4 @@
+import { BasiResponse } from '../controller/types'
 import express, { Request, Response } from 'express'
 import { HelloController } from '../controller/HelloController'
 import { LogInfo } from '../utils/logger'
@@ -15,7 +16,7 @@ helloRouter.route('/')
     // Controller Instance to excute method
     const controller: HelloController = new HelloController()
     // Obtain a Response
-    const response: any = await controller.getMessage(name)
+    const response: BasiResponse = await controller.getMessage(name)
     // Send to the client the response
     return res.send(response)
   })

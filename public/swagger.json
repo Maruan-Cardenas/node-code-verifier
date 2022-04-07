@@ -1,0 +1,76 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"BasiResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"description": "Basic JSON response for Controller"
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "code-verifier-backend",
+		"version": "1.0.0",
+		"description": "Backend Node + Express + Ts + Swagger",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {
+			"name": "Maruan Vicente"
+		}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/api/hello": {
+			"get": {
+				"operationId": "GetMessage",
+				"responses": {
+					"200": {
+						"description": "Promise of BasicRespnse",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BasiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Endpoint to retreive a Message \"Hello {name} in JSON format\"",
+				"tags": [
+					"HelloController"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "Name of the person to greet",
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
