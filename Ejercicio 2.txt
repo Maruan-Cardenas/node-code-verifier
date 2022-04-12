@@ -1,0 +1,12 @@
+1) Muestra las primeras 5 ciudades que empiecen por A ordenadas de manera ascendente, las soluciones deben ser únicas: db.Contacts.find({"location.city": /^A/}).sort({"location.city": 1}).limit(5)
+
+2) Crea una colección a parte, que solo contenga a los contactos de Francia (France) y que tengan entre 18 y 50 años. Usa una agregación para ello: db.Contacts.aggregate([{$match: {"location.country": "France"}}, {$match: {"dob.age": {$gte: 18}}}, {$match: {"dob.age": {$lte: 50}}}, {$out: "CountryFrance"}])
+
+3} Añade un número favorito a cada contacto (db.Contacts.find().forEach(function(contact){db.Contacts.updateMany({_id:contact._id}, {$set: {NumeroFavorito:Math.floor(Math.random() * 100)}})})), 
+3.1) luego crea un bucket agrupando por número favorito que separe en 5 segmentos: db.Contacts.aggregate([{$bucketAuto: {groupBy: '$NumeroFavorito', buckets: 5}}])
+
+4) En la colección de Contatcs, haz una proyección la cual tiene que devolver solo el name y username del contacto: db.Contacts.aggregate([{$project: {_id:0, nombre:1, "login.username":1}}])
+
+5) Haz una consulta en la colección de Contacts la cual devuelva un documento por cada nombre (name) y que sea único, ordenado por apellido (last), tienes que usar el operador $unwind: db.Contacts.aggregate([{$unwind: "$nombre"}, {$sortByCount: "$nombre.last"}])
+
+6) Haz una proyección convirtiendo la fecha (date) a un formato DD-MM-AAAA, la nueva variable será fechaNacimiento
