@@ -17,7 +17,7 @@ usersRouter.route('/')
     // Obtain a Response
     const response: any = await controller.getUsers(id)
     // Send to the client the response
-    return res.send(response)
+    return res.status(200).send(response)
   })
   // Delete
   .delete(async (req: Request, res: Response) => {
@@ -29,7 +29,7 @@ usersRouter.route('/')
     // Obtain a Response
     const response: any = await controller.deleteUsers(id)
     // Send to the client the response
-    return res.send(response)
+    return res.status(response.status).send(response)
   })
   // POST
   .post(async (req: Request, res: Response) => {
@@ -37,17 +37,21 @@ usersRouter.route('/')
     const name: any = req?.query?.name
     const email: any = req?.query?.email
     const age: any = req?.query?.age
+
+    const name2 = req?.body?.name
+    const email2 = req?.body?.email
+    const age2 = req?.body?.age
     // Controller Instance to excute method
     const controller: UserController = new UserController()
     const user = {
-      name,
-      email,
-      age
+      name: name || name2,
+      email: email || email2,
+      age: age || age2
     }
     // Obtain a Response
     const response: any = await controller.createUsers(user)
     // Send to the client the response
-    return res.send(response)
+    return res.status(201).send(response)
   })
   // PUT
   .put(async (req: Request, res: Response) => {
@@ -67,9 +71,15 @@ usersRouter.route('/')
     // Obtain a Response
     const response: any = await controller.updateUsers(id, user)
     // Send to the client the response
-    return res.send(response)
+    return res.status(response.status).send(response)
   })
-
-// Export HeelloRouter
+// Export users Router
 
 export default usersRouter
+
+/**
+ * Get Document => 200 OK
+ * Creation Document => 201 OK
+ * Deletion Document => 200 (Entity) / 204 (No return)
+ * Update Document => 200 (Entity) / 204 (No return)
+*/

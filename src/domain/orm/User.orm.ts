@@ -1,6 +1,10 @@
 import { userEntity } from '../entities/User.entity'
 
 import { LogError, LogSuccess } from '../../utils/logger'
+import { IUser } from '../interfaces/IUser.interface'
+import { IAuth } from '../interfaces/IAuth.interface'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 // CRUD
 
@@ -76,6 +80,60 @@ export const updateUserById = async (id: string, user: any): Promise<any | undef
   }
 }
 
-// TODO:
-// - Get User by ID
-// - Get User by email
+// Register User
+export const registerUser = async (user: IUser): Promise<any | undefined> => {
+  try {
+    const userModel = userEntity()
+
+    LogSuccess('[SUSCESS] RegisterUser')
+
+    // Create new user
+    return await userModel.create(user)
+  } catch (error) {
+    LogError('[ERROR] RegisterUser ' + error)
+  }
+}
+
+// Login User
+export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
+  try {
+    const userModel = userEntity()
+
+    LogSuccess('[SUSCESS] LoginUser')
+
+    // Find user by email
+    return await userModel.findOne({ email: auth.email }, (err: any, user: IUser) => {
+      if (err) {
+        LogError('[ERROR] LoginUser ' + err)
+      } else if (!user) {
+        LogError('[ERROR] LoginUser User not found')
+      }
+
+      // use Bcrypt to compare password
+      const validPassword = bcrypt.compareSync(auth.password, user.password)
+
+      if (!validPassword) {
+        LogError('[ERROR 401] LoginUser Invalid password')
+      }
+      // Create JWT
+      // TODO: Secret must be in env
+      const token = jwt.sign({ email: user.email }, 'SECRET', {
+        expiresIn: '24h'
+      })
+      return token
+    })
+  } catch (error) {
+    LogError('[ERROR] LoginUser ' + error)
+  }
+}
+
+// Logout User
+export const logoutUser = async (): Promise<any | undefined> => {
+  try {
+    LogSuccess('[SUSCESS] LogoutUser')
+
+    // Create new user
+  } catch (error) {
+    LogError('[ERROR] LogoutUser ' + error)
+  }
+}

@@ -1,3 +1,4 @@
+import { IUser } from '../../domain/interfaces/IUser.interface'
 import { BayResponse, BasiResponse } from '../types'
 
 export interface IHelloController {
@@ -17,6 +18,15 @@ export interface IUserController {
   createUsers(user: any): Promise<any>
   // Update user by ID
   updateUsers(id: string, user: any): Promise<any>
+}
+
+export interface IAuthController {
+  // Register new user
+  registerUser(user: IUser): Promise<any>
+  // Login user
+  loginUser(auth: any): Promise<any>
+  // Logout
+  logoutUser(auth: any): Promise<any>
 }
 
 export interface IKataController {

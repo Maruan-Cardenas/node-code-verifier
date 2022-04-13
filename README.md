@@ -8,6 +8,9 @@ Dependencias del proyecto:
   - helmet: Sirve para proteger la aplicación de algunas vulnerabilidades web
   - swagger: sirve para generar documentación de nuestro código
   - tsoa: siver para utilizar swagger con typescript y poder documentar nuestro código mediante anotaciones
+  - bcrypt: Se utiliza para cifrar la contraseña proporcionada por el usuario
+  - bcryptjs:
+  - jsonwebtoken:
 
 - dependencias de desarrollo:
   - TypeScript: es un superset de JavaScript, que nos ayuda a evitar errores al programar, ya que nos permite definir las variables que vamos a utilizar
