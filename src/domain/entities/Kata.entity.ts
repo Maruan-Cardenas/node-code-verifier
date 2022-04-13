@@ -1,14 +1,14 @@
 import mongoose from 'mongoose'
 
-export const userEntity = () => {
+export const kataEntity = () => {
   const userSchema = new mongoose.Schema({
     name: String,
     description: String,
     level: Number,
-    User: Number,
-    Date: Date,
-    Valoration: Number,
-    Chances: Number
+    user: Number,
+    date: Date,
+    valoration: Number,
+    chances: Number
   })
-  return mongoose.model('User', userSchema)
+  return mongoose.models.katas || mongoose.model('katas', userSchema)
 }
