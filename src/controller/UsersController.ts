@@ -1,9 +1,9 @@
-import { Delete, Get, Post, Put, Query, Route, Tags } from 'tsoa'
+import { Delete, Get, Put, Query, Route, Tags } from 'tsoa'
 import { IUserController } from './interfaces'
 import { LogSuccess, LogWarning } from '../utils/logger'
 
 // ORM - Users Collection
-import { updateUserById, createUser, deleteUserById, getAllUsers, getUserById } from '../domain/orm/User.orm'
+import { updateUserById, deleteUserById, getAllUsers, getUserById } from '../domain/orm/User.orm'
 
 @Route('api/users')
 @Tags('UserController')
@@ -15,17 +15,22 @@ export class UserController implements IUserController {
   */
  @Get('/')
   public async getUsers (@Query()id?: string): Promise<any> {
+    let response
     if (id) {
       LogSuccess(`[/api/Users] Get User by ID:  + ${id}`)
-      const response = await getUserById(id)
-      return response
+      response = await getUserById(id)
+      // remove password from response
+      response.password = ''
     } else {
       LogSuccess('[/api/Users] Get All users Request')
 
-      const response = await getAllUsers()
-
-      return response
+      response = await getAllUsers()
+      // remove password from response
+      response!.forEach(user => {
+        user.password = ''
+      })
     }
+    return response
   }
 
  /**
@@ -53,18 +58,6 @@ export class UserController implements IUserController {
      }
    }
  }
-
-  @Post('/')
-  public async createUsers (user: any): Promise<any> {
-    LogSuccess('[/api/Users] Create User Request')
-
-    await createUser(user)
-      .then(() => {
-        return {
-          message: 'User created'
-        }
-      })
-  }
 
   @Put('/')
   public async updateUsers (@Query()id: string, @Query()user: any): Promise<any> {

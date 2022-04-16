@@ -2,13 +2,16 @@ import { LogInfo } from '../utils/logger'
 import express, { Request, Response } from 'express'
 import { KataController } from '../controller/KatasController'
 
+// JWT Verifier MiddleWare
+import { verifyToken } from '../middlewares/verifyToken.middleware'
+
 // Router from express
 const katasRouter = express.Router()
 
 // http://localhost:8000/api/katas?id=62559ddb78cfe6203f2339d3
 katasRouter.route('/')
   // GET
-  .get(async (req: Request, res: Response) => {
+  .get(verifyToken, async (req: Request, res: Response) => {
     // Obtain a Query Param (ID)
     const id: any = req?.query?.id
     LogInfo(`[GET] /api/katas?id=${id}`)
@@ -20,7 +23,7 @@ katasRouter.route('/')
     return res.send(response)
   })
   // Delete
-  .delete(async (req: Request, res: Response) => {
+  .delete(verifyToken, async (req: Request, res: Response) => {
     // Obtain a Query Param (ID)
     const id: any = req?.query?.id
     LogInfo(`[DELETE] /api/users?id=${id}`)
@@ -32,7 +35,7 @@ katasRouter.route('/')
     return res.send(response)
   })
   // POST
-  .post(async (req: Request, res: Response) => {
+  .post(verifyToken, async (req: Request, res: Response) => {
     LogInfo('[POST] /api/katas')
     const name: any = req?.query?.name
     const description: any = req?.query?.description

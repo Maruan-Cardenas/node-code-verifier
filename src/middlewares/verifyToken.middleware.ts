@@ -1,6 +1,13 @@
 import jwt from 'jsonwebtoken'
 import { NextFunction, Request, Response } from 'express'
 
+import dotenv from 'dotenv'
+
+// Configuration of environment variables
+dotenv.config()
+
+const secret = process.env.SECRETKEY || 'secretKey'
+
 /**
  * @param { Request } req Original request, previus middleware of verification JWT
  * @param { Response } res Response to verification of JWT
@@ -21,7 +28,8 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
   }
 
   // Verify the token obtained
-  jwt.verify(token, '', (err: any, decoded: any) => {
+  // TODO: pass secret key
+  jwt.verify(token, secret, (err: any, decoded: any) => {
     if (err) {
       return res.status(500).send({
         authenticationError: 'JWT verification failed',

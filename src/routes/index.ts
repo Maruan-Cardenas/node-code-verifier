@@ -32,7 +32,7 @@ server.use('/hello', helloRouter) // http://localhost:8000/api/hello --> HelloRo
 server.use('/bye', byeRouter) // http://localhost:8000/api/bye --> ByeRouter
 // Add more Routers to the app
 server.use('/users', usersRouter) // http://localhost:8000/api/users --> UserRouter
-server.use('/auth', authRouter) // http://localhost:8000/api/users --> UserRouter
+server.use('/auth', authRouter) // http://localhost:8000/api/users --> AuthRouter
 server.use('/katas', katasRouter) // http://localhost:8000/api/katas --> kataRouter
 
 export default server

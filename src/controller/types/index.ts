@@ -12,10 +12,21 @@ export type BayResponse = {
 }
 
 /**
+ * Auth JSON response for Controller
+*/
+
+export type AuthResponse = {
+  status: number,
+  message: string,
+  token: string
+}
+
+/**
  * Error JSON response for Controller
 */
 
 export type ErrorResponse = {
+  status: number,
   error : string,
   message: string
 }

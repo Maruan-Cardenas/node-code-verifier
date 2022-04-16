@@ -3,8 +3,21 @@ import { userEntity } from '../entities/User.entity'
 import { LogError, LogSuccess } from '../../utils/logger'
 import { IUser } from '../interfaces/IUser.interface'
 import { IAuth } from '../interfaces/IAuth.interface'
+
+// Enviroment variables
+import dotenv from 'dotenv'
+
+// BCRYPT from password
 import bcrypt from 'bcrypt'
+
+// JWT from token
 import jwt from 'jsonwebtoken'
+
+// Configuration of environment variables
+dotenv.config()
+
+// Obtain Secret key to generate jwt
+const secret = process.env.SECRETKEY || 'secretKey'
 
 // CRUD
 
@@ -97,31 +110,39 @@ export const registerUser = async (user: IUser): Promise<any | undefined> => {
 // Login User
 export const loginUser = async (auth: IAuth): Promise<any | undefined> => {
   try {
-    const userModel = userEntity()
-
     LogSuccess('[SUSCESS] LoginUser')
 
-    // Find user by email
-    return await userModel.findOne({ email: auth.email }, (err: any, user: IUser) => {
-      if (err) {
-        LogError('[ERROR] LoginUser ' + err)
-      } else if (!user) {
-        LogError('[ERROR] LoginUser User not found')
-      }
+    const userModel = userEntity()
 
-      // use Bcrypt to compare password
-      const validPassword = bcrypt.compareSync(auth.password, user.password)
+    let userFound: IUser | undefined
 
-      if (!validPassword) {
-        LogError('[ERROR 401] LoginUser Invalid password')
-      }
-      // Create JWT
-      // TODO: Secret must be in env
-      const token = jwt.sign({ email: user.email }, 'SECRET', {
-        expiresIn: '24h'
+    // Check if user exists by email
+    await userModel.findOne({ email: auth.email })
+      .then((user: IUser) => {
+        userFound = user
       })
-      return token
+      .catch((error) => {
+        LogError('[ERROR Auth in ORM ] LoginUser ' + error)
+        throw new Error('[ERROR Auth in ORM ] LoginUser ' + error)
+      })
+
+    // Check if password is valid (compare with bcrypt)
+    const validPassword = bcrypt.compareSync(auth.password, userFound!.password)
+
+    if (!validPassword) {
+      LogError('[ERROR Auth in ORM ] password invalid')
+      throw new Error('[ERROR Auth in ORM ] password invalid')
+    }
+
+    // Gnerete token
+    const token = jwt.sign({ email: userFound!.email }, secret, {
+      expiresIn: '2h'
     })
+
+    return {
+      user: userFound,
+      token
+    }
   } catch (error) {
     LogError('[ERROR] LoginUser ' + error)
   }
