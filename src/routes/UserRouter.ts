@@ -15,10 +15,15 @@ usersRouter.route('/')
     // Obtain a Query Param (ID)
     const id: any = req?.query?.id
     LogInfo(`[GET] /api/users?id=${id}`)
+
+    // Pagination
+    const page: any = req?.query?.page || 1
+    const limit: any = req?.query?.limit || 10
+
     // Controller Instance to excute method
     const controller: UserController = new UserController()
     // Obtain a Response
-    const response: any = await controller.getUsers(id)
+    const response: any = await controller.getUsers(page, limit, id)
     // Send to the client the response
     return res.status(200).send(response)
   })

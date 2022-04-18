@@ -14,21 +14,15 @@ export class UserController implements IUserController {
    * @returns {Promise<any>} All user or user found by ID
   */
  @Get('/')
-  public async getUsers (@Query()id?: string): Promise<any> {
+  public async getUsers (@Query()page: number, @Query()limit: number, @Query()id?: string): Promise<any> {
     let response
     if (id) {
       LogSuccess(`[/api/Users] Get User by ID:  + ${id}`)
       response = await getUserById(id)
-      // remove password from response
-      response.password = ''
     } else {
       LogSuccess('[/api/Users] Get All users Request')
 
-      response = await getAllUsers()
-      // remove password from response
-      response!.forEach(user => {
-        user.password = ''
-      })
+      response = await getAllUsers(page, limit)
     }
     return response
   }

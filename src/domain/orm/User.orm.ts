@@ -24,14 +24,31 @@ const secret = process.env.SECRETKEY || 'secretKey'
 /**
   * Method to obtain all User from collection "Users" in Mongo Server
   */
-export const getAllUsers = async (): Promise<any[] | undefined> => {
+export const getAllUsers = async (page: number, limit: number): Promise<any[] | undefined> => {
   try {
+    LogSuccess('[SUSCESS] GetAllUser')
     const userModel = userEntity()
 
-    LogSuccess('[SUSCESS] GetAllUser')
+    const response: any = {}
 
-    // Search all users
-    return await userModel.find()
+    // Search all users (using pagination)
+    await userModel.find({ isDeleted: false })
+      .select('-password')
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec().then((users: IUser[]) => {
+        response.users = users
+      }).catch((err: any) => {
+        LogError(`[ERROR] GetAllUser ${err}`)
+      })
+
+    // Count total documents in collection "Users"
+    await userModel.countDocuments().then((total: number) => {
+      response.totalPages = Math.ceil(total / limit)
+      response.currentPage = page
+    })
+
+    return response
   } catch (error) {
     LogError('[ERROR] GetAllUser ' + error)
   }
@@ -45,7 +62,7 @@ export const getUserById = async (id: string): Promise<any | undefined> => {
     LogSuccess('[SUSCESS] GetUserById')
 
     // Search user by id
-    return await userModel.findById(id)
+    return await userModel.findById(id).select('-password')
   } catch (error) {
     LogError('[ERROR] GetUserById ' + error)
   }

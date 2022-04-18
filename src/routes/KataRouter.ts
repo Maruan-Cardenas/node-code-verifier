@@ -15,10 +15,14 @@ katasRouter.route('/')
     // Obtain a Query Param (ID)
     const id: any = req?.query?.id
     LogInfo(`[GET] /api/katas?id=${id}`)
+
+    // Pagination
+    const page: any = req?.query?.page || 1
+    const limit: any = req?.query?.limit || 10
     // Controller Instance to excute method
     const controller: KataController = new KataController()
     // Obtain a Response
-    const response: any = await controller.getKatas(id)
+    const response: any = await controller.getKatas(page, limit, id)
     // Send to the client the response
     return res.send(response)
   })

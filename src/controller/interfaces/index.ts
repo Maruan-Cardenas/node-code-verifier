@@ -11,7 +11,7 @@ export interface IByeController {
 
 export interface IUserController {
   // Read all  users from the database || Get user by ID
-  getUsers(id?: string): Promise<any>
+  getUsers(page: number, limit: number, id?: string): Promise<any>
   // Delete user by ID
   deleteUsers(id?: string): Promise<any>
   // Create new user
@@ -29,7 +29,7 @@ export interface IAuthController {
 
 export interface IKataController {
   // Read all katas from the database || Get user by ID
-  getKatas(id?: string): Promise<any>
+  getKatas(page: number, limit: number, id?: string): Promise<any>
   // Delete kata by ID
   deleteKatas(id?: string): Promise<any>
   // Create new kata

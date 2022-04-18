@@ -1,20 +1,37 @@
 import { kataEntity } from '../entities/Kata.entity'
 
 import { LogError, LogSuccess } from '../../utils/logger'
+import { IKatas } from '../interfaces/Ikatas.interface'
 
 // CRUD
 
 /**
   * Method to obtain all User from collection "Users" in Mongo Server
   */
-export const getAllKatas = async (): Promise<any[] | undefined> => {
+export const getAllKatas = async (page:number, limit:number): Promise<any[] | undefined> => {
   try {
     const userModel = kataEntity()
 
     LogSuccess('[SUSCESS] GetAllKatas')
 
-    // Search all users
-    return await userModel.find()
+    const response: any = {}
+    // Search all users (using pagination)
+    await userModel.find({ isDeleted: false })
+      .select('-password')
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec().then((katas: IKatas[]) => {
+        response.katas = katas
+      }).catch((err: any) => {
+        LogError(`[ERROR] GetAllUser ${err}`)
+      })
+
+    // Count total documents in collection "Users"
+    await userModel.countDocuments().then((total: number) => {
+      response.totalPages = Math.ceil(total / limit)
+      response.currentPage = page
+    })
+    return response
   } catch (error) {
     LogError('[ERROR] GetAllKatas ' + error)
   }
