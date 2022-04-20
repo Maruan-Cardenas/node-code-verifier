@@ -4,9 +4,10 @@ import { LogSuccess, LogWarning } from '../utils/logger'
 
 // ORM - Users Collection
 import { updateKataById, createKata, deleteKataById, getAllKatas, getKataById } from '../domain/orm/Kata.orm'
+import { IKatas } from '../domain/interfaces/Ikatas.interface'
 
-@Route('api/users')
-@Tags('UserController')
+@Route('api/katas')
+@Tags('KatasController')
 export class KataController implements IKataController {
   /**
    * Endpoint to retrieve the katas in the Collection "Katas" fron the database
@@ -15,7 +16,7 @@ export class KataController implements IKataController {
   */
  @Get('/')
   public async getKatas (@Query()page: number, @Query()limit: number, @Query()id?: string): Promise<any> {
-    let response
+    let response: any
     if (id) {
       LogSuccess(`[/api/katas] Get kats by ID:  + ${id}`)
       response = await getKataById(id)
@@ -34,40 +35,49 @@ export class KataController implements IKataController {
   */
   @Delete('/')
  public async deleteKatas (@Query()id?: string): Promise<any> {
+   let response
    if (id) {
      LogSuccess(`[/api/katas] Detele Kata by ID:  + ${id}`)
      await deleteKataById(id)
        .then(() => {
-         return {
+         response = {
            message: `Kata with ID: ${id} was deleted`
          }
        })
    } else {
      LogWarning('[/api/Katas] Delete Kata Failed, Request without ID')
 
-     return {
+     response = {
        message: 'Please provide an ID to remove'
      }
    }
+   return response
  }
 
   @Post('/')
-  public async createKatas (user: any): Promise<any> {
+  public async createKatas (kata: IKatas): Promise<any> {
     LogSuccess('[/api/Katas] Create Kata Request')
-
-    await createKata(user)
+    let response
+    await createKata(kata)
       .then(() => {
-        return {
+        LogSuccess('[/api/Katas] Create Kata successfull')
+        response = {
           message: 'Kata created'
         }
+      }).catch((err) => {
+        LogWarning(`[/api/Katas] Create Kata Failed: ${err}`)
+        response = {
+          message: 'Kata creation failed, please privide a valid kata'
+        }
       })
+    return response
   }
 
   @Put('/')
-  public async updateKatas (@Query()id: string, @Query()user: any): Promise<any> {
+  public async updateKatas (@Query()id: string, @Query()kata: IKatas): Promise<any> {
     if (id) {
-      LogSuccess(`[/api/Katas] Updateuser Kata by ID: ${id} and Kata: ${user}`)
-      await updateKataById(id, user)
+      LogSuccess(`[/api/Katas] Updateuser Kata by ID: ${id} and Kata: ${kata}`)
+      await updateKataById(id, kata)
         .then(() => {
           return {
             message: `Kata with ID: ${id} updated successfully`

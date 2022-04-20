@@ -1,9 +1,15 @@
 import { LogInfo } from '../utils/logger'
 import express, { Request, Response } from 'express'
 import { KataController } from '../controller/KatasController'
+import { IKatas, KataLevel } from '../domain/interfaces/Ikatas.interface'
 
 // JWT Verifier MiddleWare
 import { verifyToken } from '../middlewares/verifyToken.middleware'
+
+// Body Parser (Read JSON form body in request)
+import bodyParser from 'body-parser'
+// middleware to read the body of the request
+const jsonParser = bodyParser.json()
 
 // Router from express
 const katasRouter = express.Router()
@@ -39,59 +45,87 @@ katasRouter.route('/')
     return res.send(response)
   })
   // POST
-  .post(verifyToken, async (req: Request, res: Response) => {
+  .post(jsonParser, verifyToken, async (req: Request, res: Response) => {
     LogInfo('[POST] /api/katas')
-    const name: any = req?.query?.name
-    const description: any = req?.query?.description
-    const level: any = req?.query?.level
-    const user: any = req?.query?.user
-    const date: any = req?.query?.date
-    const valoration: any = req?.query?.valoration
-    const chances: any = req?.query?.chances
-    const kata = {
-      name,
-      description,
-      level,
-      user,
-      date,
-      valoration,
-      chances
-    }
 
-    // Controller Instance to excute method
-    const controller: KataController = new KataController()
-    // Obtain a Response
-    const response: any = await controller.createKatas(kata)
-    // Send to the client the response
-    return res.send(response)
-  })
-  // PUT
-  .put(async (req: Request, res: Response) => {
-    // Obtain a Query Param (ID)
-    const id: any = req?.query?.id
-    const name: any = req?.query?.name
-    const description: any = req?.query?.description
-    const level: any = req?.query?.level
-    const user: any = req?.query?.user
-    const date: any = req?.query?.date
-    const valoration: any = req?.query?.valoration
-    const chances: any = req?.query?.chances
-    const kata = {
-      name,
-      description,
-      level,
-      user,
-      date,
-      valoration,
-      chances
+    const name: string = req?.body?.name
+    const description: string = req?.body?.description || 'Default Description'
+    const level: KataLevel = req?.body?.level || KataLevel.BASIC
+    const intents: number = req?.body?.intents || 0
+    const stars: number = req?.body?.stars || 0
+    const participants: [string] = req?.body?.participants || []
+    const creator: string = req?.body?.creator
+    const solutions: string = req?.body?.solutions || 'Default Solution'
+
+    let response
+
+    if (name && description && level && intents >= 0 && stars >= 0 && participants && creator && solutions) {
+      const kata: IKatas = {
+        name,
+        description,
+        level,
+        solutions,
+        intents,
+        stars,
+        creator,
+        participants
+      }
+
+      // Controller Instance to excute method
+      const controller: KataController = new KataController()
+      // Obtain a Response
+      const Response: any = await controller.createKatas(kata)
+      // Send to the client the response
+      response = res.send(Response)
+    } else {
+      response = res.status(400).send({
+        status: 400,
+        message: '[ERROR]: Kata can not be created, Please provide all the required fields'
+      })
     }
-    LogInfo(`[PUT] /api/katas?id=${id}`)
-    // Controller Instance to excute method
-    const controller: KataController = new KataController()
-    // Obtain a Response
-    const response: any = await controller.updateKatas(id, kata)
-    // Send to the client the response
-    return res.send(response)
+    return response
+  })
+
+  // PUT
+  .put(jsonParser, verifyToken, async (req: Request, res: Response) => {
+    LogInfo('[POST] /api/katas')
+    const id = req?.body?.id
+    const name: string = req?.body?.name
+    const description: string = req?.body?.description
+    const level: KataLevel = req?.body?.level
+    const intents: number = req?.body?.intents
+    const stars: number = req?.body?.stars
+    const participants: [string] = req?.body?.participants
+    const creator: string = req?.body?.creator
+    const solutions: string = req?.body?.solutions
+
+    let response
+
+    if (id) {
+      const kata: IKatas = {
+        name,
+        description,
+        level,
+        solutions,
+        intents,
+        stars,
+        creator,
+        participants
+      }
+
+      // Controller Instance to excute method
+      const controller: KataController = new KataController()
+      // Obtain a Response
+      const Response: any = await controller.updateKatas(id, kata)
+      // Send to the client the response
+      response = res.send(Response)
+    } else {
+      response = res.status(400).send({
+        status: 400,
+        message: '[ERROR]: Kata can not be created, Please provide all the required fields'
+      })
+    }
+    return response
   })
 
 // Export HeelloRouter

@@ -1,3 +1,4 @@
+import { IKatas } from '../../domain/interfaces/Ikatas.interface'
 import { IUser } from '../../domain/interfaces/IUser.interface'
 import { BayResponse, BasiResponse } from '../types'
 
@@ -12,6 +13,8 @@ export interface IByeController {
 export interface IUserController {
   // Read all  users from the database || Get user by ID
   getUsers(page: number, limit: number, id?: string): Promise<any>
+  // Get Katas of User
+  getKatas(page: number, limit: number, id: string): Promise<any>
   // Delete user by ID
   deleteUsers(id?: string): Promise<any>
   // Create new user
@@ -33,7 +36,7 @@ export interface IKataController {
   // Delete kata by ID
   deleteKatas(id?: string): Promise<any>
   // Create new kata
-  createKatas(user: any): Promise<any>
+  createKatas(kata: IKatas): Promise<any>
   // Update kata by ID
-  updateKatas(id: string, user: any): Promise<any>
+  updateKatas(id: string, kata: IKatas): Promise<any>
 }

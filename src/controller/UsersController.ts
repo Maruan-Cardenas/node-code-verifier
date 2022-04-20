@@ -1,9 +1,9 @@
 import { Delete, Get, Put, Query, Route, Tags } from 'tsoa'
 import { IUserController } from './interfaces'
-import { LogSuccess, LogWarning } from '../utils/logger'
+import { LogError, LogSuccess, LogWarning } from '../utils/logger'
 
 // ORM - Users Collection
-import { updateUserById, deleteUserById, getAllUsers, getUserById } from '../domain/orm/User.orm'
+import { updateUserById, deleteUserById, getAllUsers, getUserById, getKatasFromUser } from '../domain/orm/User.orm'
 
 @Route('api/users')
 @Tags('UserController')
@@ -26,6 +26,21 @@ export class UserController implements IUserController {
     }
     return response
   }
+
+ public async getKatas (@Query()page: number, @Query()limit: number, @Query()id: string): Promise<any> {
+   let response
+   if (id) {
+     LogSuccess(`[/api/Users/katas] Get User Kata by ID:  + ${id}`)
+     response = await getKatasFromUser(page, limit, id)
+   } else {
+     LogError('[/api/Users/katas] please provide an ID')
+     response = {
+       status: 400,
+       message: 'Please provide an ID to Update'
+     }
+   }
+   return response
+ }
 
  /**
    * Endpoint to delete the Users in the Collection "Users" fron the database

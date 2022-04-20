@@ -1,8 +1,10 @@
 import { userEntity } from '../entities/User.entity'
+import { kataEntity } from '../entities/Kata.entity'
 
 import { LogError, LogSuccess } from '../../utils/logger'
 import { IUser } from '../interfaces/IUser.interface'
 import { IAuth } from '../interfaces/IAuth.interface'
+import { IKatas } from '../interfaces/Ikatas.interface'
 
 // Enviroment variables
 import dotenv from 'dotenv'
@@ -12,6 +14,7 @@ import bcrypt from 'bcrypt'
 
 // JWT from token
 import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
 
 // Configuration of environment variables
 dotenv.config()
@@ -68,6 +71,43 @@ export const getUserById = async (id: string): Promise<any | undefined> => {
   }
 }
 
+/**
+  * Method to obtain all User from collection "Users" in Mongo Server
+  */
+export const getKatasFromUser = async (page: number, limit: number, id: string): Promise<any[] | undefined> => {
+  try {
+    LogSuccess('[SUSCESS] GetAllUser')
+    const userModel = userEntity()
+    const kataModel = kataEntity()
+
+    let katasFound: IKatas[] = []
+    const response: any = {}
+
+    await userModel.findById(id)
+      .then(async (user: IUser) => {
+        response.user = user.email
+
+        // Create types to search katas
+        const objectIds: mongoose.Types.ObjectId[] = []
+        user.katas.forEach((katasID: string) => {
+          const objectID = new mongoose.Types.ObjectId(katasID)
+          objectIds.push(objectID)
+        })
+
+        await kataModel.find({ _id: { $in: objectIds } })
+          .then((katas: IKatas[]) => {
+            katasFound = katas
+          })
+      }).catch((err: any) => {
+        LogError(`[ERROR] get katras from user ${err}`)
+      })
+    response.katas = katasFound
+    return response
+  } catch (error) {
+    LogError('[ERROR] GetAllUser ' + error)
+  }
+}
+
 // - Delete User by ID
 export const deleteUserById = async (id: string): Promise<any | undefined> => {
   try {
@@ -82,22 +122,8 @@ export const deleteUserById = async (id: string): Promise<any | undefined> => {
   }
 }
 
-// - Create new User
-export const createUser = async (user: any): Promise<any | undefined> => {
-  try {
-    const userModel = userEntity()
-
-    LogSuccess('[SUSCESS] CreateUser')
-
-    // Create new user
-    return await userModel.create(user)
-  } catch (error) {
-    LogError('[ERROR] CreateUser ' + error)
-  }
-}
-
 // - Update User by ID
-export const updateUserById = async (id: string, user: any): Promise<any | undefined> => {
+export const updateUserById = async (id: string, user: IUser): Promise<any | undefined> => {
   try {
     const userModel = userEntity()
 

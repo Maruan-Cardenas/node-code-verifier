@@ -6,18 +6,17 @@ import { IKatas } from '../interfaces/Ikatas.interface'
 // CRUD
 
 /**
-  * Method to obtain all User from collection "Users" in Mongo Server
+  * Method to obtain all Katas from collection "Katas" in Mongo Server
   */
 export const getAllKatas = async (page:number, limit:number): Promise<any[] | undefined> => {
   try {
-    const userModel = kataEntity()
+    const kataModel = kataEntity()
 
     LogSuccess('[SUSCESS] GetAllKatas')
 
     const response: any = {}
     // Search all users (using pagination)
-    await userModel.find({ isDeleted: false })
-      .select('-password')
+    await kataModel.find({ isDeleted: false })
       .limit(limit)
       .skip((page - 1) * limit)
       .exec().then((katas: IKatas[]) => {
@@ -27,7 +26,7 @@ export const getAllKatas = async (page:number, limit:number): Promise<any[] | un
       })
 
     // Count total documents in collection "Users"
-    await userModel.countDocuments().then((total: number) => {
+    await kataModel.countDocuments().then((total: number) => {
       response.totalPages = Math.ceil(total / limit)
       response.currentPage = page
     })
@@ -40,12 +39,12 @@ export const getAllKatas = async (page:number, limit:number): Promise<any[] | un
 // Get a Kata by id
 export const getKataById = async (id: string): Promise<any | undefined> => {
   try {
-    const userModel = kataEntity()
+    const kataModel = kataEntity()
 
     LogSuccess('[SUSCESS] GetKataById')
 
-    // Search user by id
-    return await userModel.findById(id)
+    // Search kata by id
+    return await kataModel.findById(id)
   } catch (error) {
     LogError('[ERROR] GetKataById ' + error)
   }
@@ -54,45 +53,41 @@ export const getKataById = async (id: string): Promise<any | undefined> => {
 // - Delete Kata by ID
 export const deleteKataById = async (id: string): Promise<any | undefined> => {
   try {
-    const userModel = kataEntity()
+    const kataModel = kataEntity()
 
     LogSuccess('[SUSCESS] DeleteKataById')
 
-    // Delete user by id
-    return await userModel.findByIdAndDelete(id)
+    // Delete kata by id
+    return await kataModel.findByIdAndDelete(id)
   } catch (error) {
     LogError('[ERROR] DeleteKataById ' + error)
   }
 }
 
-// - Create new User
-export const createKata = async (user: any): Promise<any | undefined> => {
+// - Create new Kata
+export const createKata = async (kata: IKatas): Promise<any | undefined> => {
   try {
-    const userModel = kataEntity()
+    const kataModel = kataEntity()
 
     LogSuccess('[SUSCESS] CreateUser')
 
-    // Create new user
-    return await userModel.create(user)
+    // Create new kata
+    return await kataModel.create(kata)
   } catch (error) {
-    LogError('[ERROR] CreateUser ' + error)
+    LogError('[ERROR] Creating kata ' + error)
   }
 }
 
-// - Update User by ID
-export const updateKataById = async (id: string, user: any): Promise<any | undefined> => {
+// - Update Kata by ID
+export const updateKataById = async (id: string, kata: IKatas): Promise<any | undefined> => {
   try {
-    const userModel = kataEntity()
+    const kataModel = kataEntity()
 
     LogSuccess('[SUSCESS] UpdateKataById')
 
     // Update user by id
-    return await userModel.findByIdAndUpdate(id, user)
+    return await kataModel.findByIdAndUpdate(id, kata)
   } catch (error) {
     LogError('[ERROR] UpdateKataById ' + error)
   }
 }
-
-// TODO:
-// - Get User by ID
-// - Get User by email
